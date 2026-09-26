@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Enter for New Line in ChatGPT
 // @namespace    https://github.com/0npv527yh9/userscripts
-// @version      1.0.0
+// @version      1.0.1
 // @description  Use Enter for a new line and Ctrl+Enter or Cmd+Enter to send messages on ChatGPT.
 // @match        https://chatgpt.com/*
 // @match        https://chat.openai.com/*
@@ -31,13 +31,17 @@
     }
 
     const target = event.target;
-    const editor = target.closest('section[data-turn="user"] textarea');
+    const editor = target.closest(
+      '[data-turn-key] [contenteditable="true"][data-composer-markdown]'
+    );
     if (editor) {
       handleEditorEnter(event, editor);
       return;
     }
 
-    const input = target.closest('#prompt-textarea[contenteditable="true"]');
+    const input = target.closest(
+      '[contenteditable="true"][data-composer-markdown]'
+    );
     if (input) handleInputEnter(event, input);
   }
 
@@ -49,7 +53,10 @@
     event.preventDefault();
     event.stopImmediatePropagation();
 
-    editor.closest("section")?.querySelector("button.btn-primary:not([disabled])")?.click();
+    editor
+      .closest("[data-turn-key]")
+      ?.querySelector('button[type="submit"]:not([disabled])')
+      ?.click();
   }
 
   function handleInputEnter(event, input) {
